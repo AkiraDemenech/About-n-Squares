@@ -32,9 +32,9 @@ def aptidao (d,g=None):
 	global quad
 	if g == None:
 		global d_max
-		return (101**(1-(d/d_max)))-1
+		return 100-(100*d/d_max)#(101**(1-(d/d_max)))-1
 	return aptidao(((d-quad[0])**2 + (g-quad[1])**2)**(1/2))
-'''
+#'''
 c = d_max
 while c >= 0:
 	print(c,aptidao(c))
@@ -43,7 +43,7 @@ c = 0
 while c <= d_max:
 	print(c,aptidao(c))
 	c += 1
-'''
+#'''
 def andar (*coord):
 	quadrados[quad[1]][quad[0]].config(**BRA)
 	c = 0
