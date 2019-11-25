@@ -23,27 +23,31 @@ teto = mx,my
 quadrados = []
 quad 	= [mx//2,my//2]
 vence 	= [0,0]
-qtd 	= 2#10+int(5*random())
+qtd 	= 2
 d_max	= ((mx-1)**2 + (my-1)**2)**(1/2)
 
 print('Lista de coordenadas dos %d sentidos:'%len(sentidos),sentidos,'\nCoordenadas máximas: %d,%d' %teto,'\nDistância máxima:',d_max)
 
-def aptidao (d,g=None):
+ #	aptidão
+def avaliar (d,g=None): 
 	global quad
 	if g == None:
 		global d_max
-		return 100-(100*d/d_max)#(101**(1-(d/d_max)))-1
-	return aptidao(((d-quad[0])**2 + (g-quad[1])**2)**(1/2))
-#'''
+		return 100*(1-(d/d_max)) #	100-(100*d/d_max)	||	(101**(1-(d/d_max)))-1 == (101/(101**(d/d_max)))-1
+	return avaliar(((d-quad[0])**2 + (g-quad[1])**2)**(1/2))
+'''
 c = d_max
 while c >= 0:
-	print(c,aptidao(c))
+	print(c,avaliar(c))
 	c -= 1
 c = 0
 while c <= d_max:
-	print(c,aptidao(c))
+	print(c,avaliar(c))
 	c += 1
-#'''
+'''
+def gerar ():
+	return [int(mx*random()),int(my*random())]
+
 def andar (*coord):
 	quadrados[quad[1]][quad[0]].config(**BRA)
 	c = 0
@@ -133,7 +137,7 @@ def cuidar (b=None,bots=[]):
 				if b[c] >= teto[c]:
 					b[c] = teto[c] - 1
 			quadrados[b[1]][b[0]].config(**PRE)
-			print(b,aptidao(*b))
+			print(b,avaliar(*b))
 			if b != quad:
 				sleep((11/12)-(random()/8))
 			if b == quad:
@@ -149,11 +153,13 @@ def cuidar (b=None,bots=[]):
 		return
 	
 	b = vence
-	for contador in range(qtd):	
+	c = qtd
+	while c>0:	
 		if b != quad:
 			bots.append(b)
-		b = [int(mx*random()),int(my*random())]
-	if len(bots) == 0:
+		b = gerar()
+		c -= 1
+	if len(bots) < 2:
 		b = bots
 		cuidar(bots=b)
 		print("Ação de emergência utilizada")
