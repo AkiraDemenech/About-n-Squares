@@ -24,6 +24,7 @@ quadrados = []
 quad 	= [mx//2,my//2]
 vence 	= [0,0]
 qtd 	= 2
+f_max	= 100
 d_max	= ((mx-1)**2 + (my-1)**2)**(1/2)
 
 print('Lista de coordenadas dos %d sentidos:'%len(sentidos),sentidos,'\nCoordenadas máximas: %d,%d' %teto,'\nDistância máxima:',d_max)
@@ -33,7 +34,8 @@ def avaliar (d,g=None):
 	global quad
 	if g == None:
 		global d_max
-		return 100*(1-(d/d_max)) #	100-(100*d/d_max)	||	(101**(1-(d/d_max)))-1 == (101/(101**(d/d_max)))-1
+		global f_max
+		return f_max*(1-(d/d_max))
 	return avaliar(((d-quad[0])**2 + (g-quad[1])**2)**(1/2))
 '''
 c = d_max
