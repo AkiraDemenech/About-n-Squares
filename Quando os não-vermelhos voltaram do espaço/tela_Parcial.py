@@ -17,7 +17,6 @@ for i in (-1,2):
 #		print(sentidos[len(sentidos)-1])
 		j += 1
 
-
 mx,my	=	32,16
 teto = mx,my
 quadrados = []

@@ -17,7 +17,50 @@ for i in (-1,2):
 		sentidos.append((sentidos[j][0]*i,sentidos[j][1]*i))
 #		print(sentidos[len(sentidos)-1])
 		j += 1
-print('Lista de coordenadas dos %d sentidos:'%len(sentidos),sentidos)
+		
+mx,my	=	32,16
+teto = mx,my
+quadrados = []
+quad 	= [mx//2,my//2]
+vence 	= [0,0]
+qtd 	= 2
+f_max	= 100
+d_max	= ((mx-1)**2 + (my-1)**2)**(1/2)
+
+print('Lista de coordenadas dos %d sentidos:'%len(sentidos),sentidos,'\nCoordenadas máximas: %d,%d' %teto,'\nDistância máxima:',d_max)
+
+ #	aptidão
+def avaliar (d,g=None): 
+	global quad
+	if g == None:
+		global d_max
+		global f_max
+		return f_max*(1-(d/d_max))
+	return avaliar(((d-quad[0])**2 + (g-quad[1])**2)**(1/2))
+'''
+c = d_max
+while c >= 0:
+	print(c,avaliar(c))
+	c -= 1
+c = 0
+while c <= d_max:
+	print(c,avaliar(c))
+	c += 1
+'''
+def gerar ():
+	return [int(mx*random()),int(my*random())]
+
+def andar (*coord):
+	quadrados[quad[1]][quad[0]].config(**BRA)
+	c = 0
+	try:
+		while len(coord)>c:
+			if teto[c] > coord[c] and coord[c] >= 0:
+				quad[c] = coord[c]
+			c += 1
+	except Exception:
+		pass
+	quadrados[quad[1]][quad[0]].config(**VER)
 
 def xadrez (mestre, c=8,h=None,espera=0,matriz=[],funcao=None,ligue=False):
 	mestre = Frame(mestre)
@@ -37,7 +80,7 @@ def xadrez (mestre, c=8,h=None,espera=0,matriz=[],funcao=None,ligue=False):
 			matriz[0].insert(0,Button(m,text=(x,y),command=funcao))
 			matriz[0][0].pack(fill=BOTH, side=RIGHT)
 			matriz[0][0].coord = x,y
-			matriz[0][0].ir = lambda col=x-1,lin=y-1: matriz[lin][col].config(**VER)#print(pos)
+			matriz[0][0].ir = lambda col=x-1,lin=y-1: andar(col,lin)#matriz[lin][col].config(**VER)#print(pos)
 		#	print(x,y)
 			sleep(espera/(x*y))
 			x -= 1
@@ -72,7 +115,61 @@ def ativar (tabuleiro):
 	except Exception:
 		print("\t\aUm erro ocorreu na construção da tela branca, no caso de permanência do cinza claro padrão em algum elemento, por favor, repita esta operação.")
 
+	cuidar()
 
+def cuidar (b=None,bots=[]):
+	global vence
+	global quad
+	global qtd
+	global BRA
+	global PRE
+	global PRETO
+	global BRANCO
+
+	if b != None:
+		while len(bots) > 0 and not quad in bots:
+			quadrados[b[1]][b[0]].config(**BRA)
+			dv = sentidos[int(random()*len(sentidos))]
+			c = len(b)
+			while c > 0:
+				c	+= -1
+				b[c]+= dv[c]
+				if b[c] < 0:
+					b[c] = 0
+				if b[c] >= teto[c]:
+					b[c] = teto[c] - 1
+			quadrados[b[1]][b[0]].config(**PRE)
+			print(b,avaliar(*b))
+			if b != quad:
+				sleep((11/12)-(random()/8))
+			if b == quad:
+				print('\a\t',b)
+				bots.clear()
+				qtd += 1#= len(bots) + 1
+				vence,quad = b,[mx//2,my//2]
+				sleep((12/11)+(random()/4))
+				ativar(quadrados)
+				return
+		quadrados[b[1]][b[0]].config(**BRA)
+		BRANCO,BRA,PRE,PRETO = PRETO,PRE,BRA,BRANCO
+		return
+	
+	b = vence
+	c = qtd
+	while c>0:	
+		if b != quad:
+			bots.append(b)
+		b = gerar()
+		c -= 1
+	if len(bots) < 2:
+		b = bots
+		cuidar(bots=b)
+		print("Ação de emergência utilizada")
+	else:
+		print(len(bots),bots)
+	for b in bots:
+		Thread(None, lambda: cuidar(b,bots)).start()
+'''	
 a = Tk()
 #a.config(bg='WHITE')
 a.title("About 2") #a História de n Quadrados
@@ -81,11 +178,63 @@ a.title("About 2") #a História de n Quadrados
 #b = {'width':a.winfo_screenwidth()//9,'height':a.winfo_screenheight()//8,'master':a}
 #b = Frame(**b),Frame(**b)
 b = [Label(a,text="\n\n")]
-b.extend((Button(a,command=lambda: iniciar(a,32,16,*b),**VER,text=VERMELHO), Button(a,command=a.quit,bg=PRETO,text="n")))
+b.extend((Button(a,command=lambda destruir=b: iniciar(a,mx,my,*destruir,botoes=quadrados),**VER,text=VERMELHO), Button(a,command=a.quit,bg=PRETO,text="n")))
 b[1].pack(side=RIGHT)
 b[2].pack()
 b[0].pack()
-print(Quadro())
+b = '0123456789ABCDEF'
+c = 0
+while c < len(sentidos):
+	for d in (b[c]*2).title():
+		a.bind(d,lambda event,x=sentidos[c][0],y=sentidos[c][1]: andar(quad[0]+x,quad[1]+y))
+	c += 1
 #Thread(None, xadrez, None, (a,)).start()
 #Thread(None, ).start()
 a.mainloop()
+'''
+class Tela:
+
+	q = n = None
+	def __gt__ (self, o):
+		try:
+			return (self.q > o.q or (self.q == o.q and self.n > o.n))
+		except Exception:
+			return NotImplemented
+	def __lt__ (self, o):
+		try:
+			return (self.q < o.q or (self.q == o.q and self.n < o.n))
+		except Exception:
+			return NotImplemented
+	def __le__ (self, o):
+		return type(o) == Tela and not self.__gt__(o)
+	def __ge__ (self, o):
+		return type(o) == Tela and not self.__lt__(o)
+	def __ne__ (self, o):
+		return not (self.__ge__(o) and self.__le__(o))
+	def __eq__ (self, o):
+		return not self.__ne__(o)
+	def __repr__ (self):
+		return self.__str__()
+	def __str__ (self):
+		res = 'Tela(%s,%s)' %(self.q.__repr__(),self.n.__repr__())
+		if __name__ != '__main__':
+			res = 'tela.%s' %res
+		return res
+
+	def __init__ (self, vermelho=None, quadrados=None):
+		if type(quadrados) == Quadro:
+			quadrados.mestra(self)
+		elif type(quadrados) in (tuple,list,set):
+			quadrados = Quadro(self,quadrados)
+		else:
+			quadrados = Quadro(self)
+		self.n = quadrados
+		self.sentidos = tuple(sentidos)
+		self.protagonista(vermelho)
+
+	def protagonista (self,principal=None):
+		if principal == None:
+			return self.q
+		self.q = principal
+		if self != principal.s:
+			self.q.mestra(self,VER)
