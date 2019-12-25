@@ -2,4 +2,4 @@
     
     About n [Squares]
 
-projeto de pesquisa/software de TCC
+projeto de pesquisa\software de TCC

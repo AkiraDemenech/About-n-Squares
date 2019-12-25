@@ -33,10 +33,6 @@ class Quadro:
 		return not self.__ge__(o)
 	def __add__ (self,o):
 		return Quadro(self.s,self.populacao+list(o))#.populacao
-	def __iadd__ (self,o):
-		self.populacao += list(o)#.populacao
-	def __imul__ (self,o):
-		self.populacao *= o
 	def __mul__ (self,o):
 		return Quadro(self.s,self.populacao*o)
 	def __len__ (self):	
