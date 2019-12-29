@@ -1,12 +1,22 @@
 import quadrado
 
-def popular (n=0,p=[]):
+def popular (n=0,p=None):
+	if p == None:
+		p = []
+	while len(p) < n//4:
+		p.append(quadrado.gerar(quadrado.Quadrado))
+	for q in (quadrado.reverter,quadrado.negativar):
+		m = len(p)
+		while m > 0:
+			m -= 1
+			p.append(q(p[m]))
+	while len(p) < n:
+		p.append(quadrado.gerar(quadrado.Quadrado))
 	return p
 
 class Quadro:
 
-	populacao = []
-	s = None
+	populacao = s = None
 
 	def __contains__ (self,algo):
 		return self.populacao.__contains__(algo)
@@ -33,6 +43,12 @@ class Quadro:
 		return not self.__ge__(o)
 	def __add__ (self,o):
 		return Quadro(self.s,self.populacao+list(o))#.populacao
+	def __iadd__ (self,o):
+		self.populacao += list(o)#.populacao
+		return self
+	def __imul__ (self,o):
+		self.populacao *= o
+		return self
 	def __mul__ (self,o):
 		return Quadro(self.s,self.populacao*o)
 	def __len__ (self):	
@@ -47,13 +63,22 @@ class Quadro:
 	def __iter__ (self):
 		return self.populacao.__iter__()
 	
-	def __init__ (self, mestra=None, populacao=2):
+	def __init__ (self, mestra=None, populacao=None):#16):#2):
+		if type(mestra) in (Quadro,quadrado.Quadrado):
+			if populacao == None:
+				try:
+					populacao = mestra.populacao
+				except AttributeError:
+					if mestra.s != None and mestra.s.n != None:
+						populacao = mestra.s.n.populacao
+			mestra = mestra.s
 		if not type(populacao) in (list,tuple,set):
-			popular(populacao, self.populacao)
-		else:
-			if type(populacao) != list:
-				populacao = list(populacao)
-			self.populacao = populacao
+			if populacao == None:
+				populacao = 16
+			populacao = popular(populacao)
+		elif type(populacao) != list:
+			populacao = list(populacao)
+		self.populacao = populacao
 		self.mestra(mestra)
 		if mestra == None:
 			mestra = quadrado.tela.Tela(None,self)
@@ -77,4 +102,34 @@ class Quadro:
 			if type(self.populacao[c]) != quadrado.Quadrado:
 				self.populacao[c] = quadrado.Quadrado(self.populacao[c])
 			self.populacao[c].mestra(mestra,quadrado.tela.PRE)
-		
+	
+	def continuar (self):
+		self.s.continuar()
+	
+	def reiniciar (self,event=0):
+		self.pausar()
+	#	p = len(self)
+		self.populacao.clear()
+		self.__init__(self.s)
+		print(len(self),'novos quadrados gerados')
+		self.iniciar()
+	
+	def iniciar (self):
+		return
+
+	def pausar (self):
+		return
+
+	def avaliar (self):
+		for ind in self:#populacao:
+			ind.avaliar()
+
+	def sort (self,decrescente=True,naoavalie=False):
+		if not naoavalie:
+			self.avaliar()
+		self.populacao.sort()
+		if decrescente:
+			self.reverse()
+	
+	def reverse (self):
+		self.populacao.reverse()
