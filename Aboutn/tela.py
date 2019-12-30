@@ -2,7 +2,7 @@ from tkinter import BOTH, RIGHT, LEFT, Tk, Frame, Button, Label
 from threading import Thread
 from time import sleep, time
 from random import random
-from quadro import Quadro#, quadrado
+from Aboutn.quadro import Quadro#, quadrado
 
 VERMELHO='RED'; 	VER = {"bg":VERMELHO,"fg":VERMELHO}
 BRANCO = 'WHITE'; 	BRA = {"bg": BRANCO, "fg":BRANCO}

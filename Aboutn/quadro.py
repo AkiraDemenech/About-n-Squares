@@ -1,4 +1,4 @@
-import quadrado
+from Aboutn import quadrado
 
 def popular (n=0,p=None):
 	if p == None:

@@ -1,4 +1,4 @@
-import tela#, warnings
+from Aboutn import tela
 
 f_max	= 100
 tamanho	=  73 
@@ -295,4 +295,3 @@ class Quadrado:
 
 	def pausar (self):
 		return
-
