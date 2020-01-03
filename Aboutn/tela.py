@@ -98,7 +98,7 @@ def xadrez (mestre, c=8,h=None,espera=0,matriz=[],ligue=False,*ligargs):
 		ativar(matriz,*ligargs)
 	return matriz
 
-def iniciar (mestre, x=16,y=None,*imolados,tempo=1/13,botoes=[],inicio=lambda: print('\t\aFunção para ativação não fornecida'),comando=lambda para: print('\tMétodo para pressão não fornecido',*para)):
+def iniciar (mestre, x=16,y=None,*imolados,tempo=1/13,botoes=[],inicio=lambda: print('\t\aFunção para ativação não fornecida'),comando=lambda para: print('\tMétodo para pressão não fornecido',*para),fechar=input):
 	for i in imolados:
 		try:
 			i.destroy()
@@ -106,7 +106,9 @@ def iniciar (mestre, x=16,y=None,*imolados,tempo=1/13,botoes=[],inicio=lambda: p
 			print('\t\aNão foi possível destruir o elemento',i)
 	Thread(None, xadrez, "Breve-montagem-ambiental", (mestre,x,y,tempo,botoes,True,comando,inicio)).start()
 	print('Tupla de objetos destruídos:',imolados)
+	mestre.protocol("WM_DELETE_WINDOW", fechar)
 	mestre.title('About n')
+	
 
 def ativar (tabuleiro,pressionar=None,principiar=input):
 	try:
@@ -119,6 +121,7 @@ def ativar (tabuleiro,pressionar=None,principiar=input):
 		c.master.master.config(bg=BRANCO)
 		c.master.master.master.config(bg=BRANCO)
 		c.master.master.master.title ('About n [Squares]')
+	#	c.master.master.master.protocol("WM_DELETE_WINDOW", DISABLED)
 	except Exception:
 		print('\t\aUm erro ocorreu na construção da tela branca, no caso de permanência do cinza claro padrão em algum elemento, por favor, repita esta operação.')
 	principiar()
@@ -268,11 +271,12 @@ class Tela:
 				tela = Tk()
 			self.tela = tela
 		self.tela.title('About 2')
+		self.tela.protocol("WM_DELETE_WINDOW", self.tela.quit)
 		self.b = quadrados
-		b = [Label(tela,text='\n\n')]
-		print(b)
-		b.append(Button(tela,command=lambda destruir=b: iniciar(self.tela,mx,my,*destruir,botoes=self.b,comando=self.q.ir,inicio=self.n.iniciar),**VER,text=VERMELHO))
-		b.append(Button(tela,command=self.tela.quit,bg=PRETO,text='n'))
+		b = [Label(tela,text='\n\n',bg=self.tela['bg'])]
+		#print(b)
+		b.append(Button(tela,command=lambda destruir=b: iniciar(self.tela,mx,my,*destruir,botoes=self.b,comando=self.q.ir,inicio=self.n.iniciar,fechar=self.reiniciar),**VER,text=VERMELHO))
+		b.append(Button(tela,command=self.n.reiniciar,bg=PRETO,text='n'))
 		b[1].pack(side=RIGHT)
 		b[2].pack()
 		b[0].pack()
@@ -282,10 +286,11 @@ class Tela:
 			c += -1
 			for d in (b[c]*2).title():
 				tela.bind(d,lambda event,to=sentidos[c]: self.q.ir(*to))
-		for d in 'Zz':
-			tela.bind(d,self.n.reiniciar)
+	#	for d in 'Zz':
+	#		tela.bind(d,self.n.reiniciar)
 	#	self.tela.bind('<space>',self.continuar)
 		self.tela.bind('<Escape>',self.reiniciar)
+		
 		self.tela.mainloop()
 
 	def reiniciar (self,event=0):
@@ -295,9 +300,10 @@ class Tela:
 			self.b.clear()
 			self.iniciar()
 		except Exception:
-			print(self,'incapaz de reiniciar neste momento, tente novamente mais tarde.')
+			pass
+		#	print(self,'incapaz de reiniciar neste momento, tente novamente mais tarde.')
 
-	def continuar (self, inverter=False):
+	def continuar (self, inverter=False, geracao=None):
 		if inverter:
 			global BRANCO, PRETO
 			BRANCO, PRETO = PRETO, BRANCO

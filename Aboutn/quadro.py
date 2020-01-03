@@ -14,9 +14,29 @@ def popular (n=0,p=None):
 		p.append(quadrado.gerar(quadrado.Quadrado))
 	return p
 
+def sortear (p,n=range(2)):
+	p.sort()
+	c = len(p)
+	while c > 0:
+		r = []
+		f = p.f
+		for d in n:
+			d = 0
+			a = quadrado.tela.random() * f
+			while True:
+				if not d in r:
+					if a < p.populacao[d].f:
+						break
+					a -= p.populacao[d].f
+				d += 1
+			f -= p.populacao[d].f
+			r.append(d)
+		yield r
+		c -= 1
+
 class Quadro:
 
-	populacao = s = None
+	populacao = s = f = None
 
 	def __contains__ (self,algo):
 		return self.populacao.__contains__(algo)
@@ -102,27 +122,46 @@ class Quadro:
 			if type(self.populacao[c]) != quadrado.Quadrado:
 				self.populacao[c] = quadrado.Quadrado(self.populacao[c])
 			self.populacao[c].mestra(mestra,quadrado.tela.PRE)
-	
+
 	def continuar (self):
-		self.s.continuar()
-	
-	def reiniciar (self,event=0):
 		self.pausar()
-	#	p = len(self)
+		t = []
+		for x,y in sortear(self):
+			print(x,y)
+			t.append(quadrado.cruzar(self.populacao[x],self.populacao[y]))
+		t.append(self.populacao[0])
+		t,self.populacao = self.populacao,t
+		self.mestra()
+		self.s.q.ir(para=(quadrado.tela.qx,quadrado.tela.qy),permissao=True)
+		self.s.continuar(len(self)%2==1,t)
+		self.iniciar()
+		print(len(self),'em campo.')
+	
+	def reiniciar (self,event=False):
+		self.pausar()
 		self.populacao.clear()
 		self.__init__(self.s)
 		print(len(self),'novos quadrados gerados')
-		self.iniciar()
+		if event:
+			self.iniciar()
 	
 	def iniciar (self):
-		return
+		if self.s.q in self:
+			self.reiniciar(True)
+		self.s.q.iniciar()
+		for q in self:#.populacao:
+			q.iniciar()
 
 	def pausar (self):
-		return
+		self.s.q.pausar()
+		for q in self:#.populacao:
+			q.pausar()
 
 	def avaliar (self):
-		for ind in self:#populacao:
-			ind.avaliar()
+		self.f = 0
+		for ind in self:#.populacao:
+			self.f += ind.avaliar()
+		return self.f
 
 	def sort (self,decrescente=True,naoavalie=False):
 		if not naoavalie:

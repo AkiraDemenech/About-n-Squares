@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
 import setuptools
-
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+with open("README.md", "r", encoding='utf-8') as fl:
+    long_description = fl.read()
 
 setuptools.setup(
     name='Aboutn',
-    version='0.2.2.01',
+    version='0.2.2.2',
     url='https://github.com/AkiraDemenech/About-n-Squares',
     license='MIT License',
     author='Guilherme Akira Demenech Mori',

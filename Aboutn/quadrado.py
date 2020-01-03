@@ -1,4 +1,4 @@
-from Aboutn import tela
+from Aboutn import tela#, warnings
 
 f_max	= 100
 tamanho	=  73 
@@ -35,7 +35,8 @@ def cruzar (a,b):
 		return a[:c] + b[c:]
 	except TypeError:
 		if type(a) == str:
-			a, b = b, a
+			return b + a
+		#	a, b = b, a
 		return a + b
 
 def reverter (c):
@@ -71,7 +72,7 @@ def decimal (b):
 class Quadrado:
 
 	y = x = 0
-	s = c = cor = erro = None
+	s = c = cor = erro = correr = None
 
 	def __ne__ (self,outro):
 		return not self.__eq__(outro)
@@ -106,7 +107,15 @@ class Quadrado:
 	def __le__ (self,outro):
 		return not self.__gt__(outro)
 	def __len__ (self):
-		return self.c.__len__()
+		try:
+			return self.c.__len__()
+		except AttributeError:
+			return -1
+	def __iter__ (self):
+		try:
+			return self.c.__iter__()
+		except AttributeError:
+			return NotImplemented
 	def __contains__ (self,gene):
 		try:
 			return self.c.__contains__(gene)
@@ -173,6 +182,9 @@ class Quadrado:
 		if x != None:
 			self.x = x
 
+	def __abs__ (self):
+		return decimal(self.c)#.__abs__()
+
 	def __add__ (self,outro):
 		if verificar(self,outro):#self.verificar() or Quadrado(outro).verificar():
 			print('Cruzamento inválido')
@@ -215,7 +227,7 @@ class Quadrado:
 		self.x = rotas.pop(0)
 		self.y = rotas.pop(0)
 		self.rotas = {}
-		r = len(rotas)
+		r = len(tela.sentidos)#rotas
 		try:
 			while r > 0:
 				r += -1
@@ -239,6 +251,7 @@ class Quadrado:
 			print(str(self) + '.avaliar(): Mestra, seu Protagonista ou as Coordenadas do último não encontrado(a)(s)')
 			#warnings.warn(str(self) + '.avaliar(): Mestra, seu Protagonista ou as Coordenadas do último não encontrado(a)(s)',RuntimeWarning)
 			#RuntimeWarning('Mestra, seu Protagonista ou as Coordenadas do último não encontrado(a)(s)')
+		return self.f
 	
 	def localizar (self):
 		try:
@@ -255,17 +268,21 @@ class Quadrado:
 			print(str(self) + '.localizar(): Mestra, seu Protagonista ou as Coordenadas do último não encontrado(a)(s)')
 
 	def mover (self,dex=0,dey=0):
-		return self.s.colorir(dex,dey) and self.s.colorir(self.x,self.y,self.cor)
+		i = self.s.colorir(dex,dey)
+		j = self.s.colorir(self.x,self.y,self.cor)
+		return i and j
 
-	def ir (self,dx=None,dy=None,para=None):
+	def ir (self,dx=None,dy=None,para=None,permissao=False):
+		if not (self.correr or permissao):
+			return None
 
 		if para == None:
 			try:
 				if None==dx==dy:
-					dx,dy = self.rotas[self.localizar]
+					dx,dy = self.rotas[self.localizar()]
 			except KeyError:
 				dy=dx = 0
-				print('No ponto cego de',str(self))
+			#	print('No ponto cego de',str(self))
 
 			self.x,dx = self.x+dx,self.x
 			self.y,dy = self.y+dy,self.y
@@ -287,11 +304,27 @@ class Quadrado:
 		if self.y < 0:
 			self.y = 0
 
-		if not self.mover(dx,dy):
+		if not (self.mover(dx,dy) or permissao):
 			print('Movimentação de',self,'não concluída.')
+			return False
+		return True
+
+#	def travar (self,v=True):
+#		self.vencido = v
+
+	def andar (self):
+		while self.correr and self.ir():
+			if self.s.q == self:
+				self.s.n.continuar()
+			tela.sleep(0.55 + tela.random())
+	#	print(self,'parou de andar.')
 
 	def iniciar (self):
-		return
+		self.correr = True
+		if self.c != None:
+			tela.Thread(None,self.andar,str(self)).start()
 
 	def pausar (self):
-		return
+		self.correr = False
+
+
