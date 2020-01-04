@@ -1,22 +1,35 @@
-from tkinter import BOTH, RIGHT, LEFT, Tk, Frame, Button, Label
-from threading import Thread
-from time import sleep, time
-from random import random
-from Aboutn.quadro import Quadro#, quadrado
 
 VERMELHO='RED'; 	VER = {"bg":VERMELHO,"fg":VERMELHO}
 BRANCO = 'WHITE'; 	BRA = {"bg": BRANCO, "fg":BRANCO}
 PRETO  = 'BLACK'; 	PRE = {"bg": PRETO, "fg": PRETO}
 
 #	diferença entre x,y da coisa relativa e do objeto de origem (ex: player relativo ao bot)
-	#		(1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1),(2,0),(2,2),(0,2),(-2,2),(-2,0),(-2,-2),(0,-2),(2,-2)
+	#		(1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1),(2,0),(2,2),(0,2),(-2,2),(-2,0),(-2,-2),(0,-2),(2,-2), (2, -1), (2, 1), (-1, 2), (1, 2), (-2, -1), (-2, 1), (-1, -2), (1, -2)
 sentidos = [(1,0),(1,1),(0,1),(-1,1)]
 for i in (-1,2):
 	j,k = 0,len(sentidos)
 	while j < k:
 		sentidos.append((sentidos[j][0]*i,sentidos[j][1]*i))
-#		print(sentidos[len(sentidos)-1])
+		#print(sentidos[len(sentidos)-1])
 		j += 1
+#k = 1
+#for i in range(len(sentidos)//2,len(sentidos)):
+#	if 0 in sentidos[i]:
+#		for j in range(2):#"''":
+#			j = list(sentidos[i])
+#			k = -k
+		#	k *= -1
+#			j[j.index(0)] = k
+#			sentidos.append(tuple(j))
+i,j = 1,2
+z = '"'*2#range(2)
+for x in z:
+	for y in z:
+		sentidos.append((i,j))
+		sentidos.append((j,i))
+		i = -i
+	j = -j
+
 sentidos= tuple(sentidos)		
 mx,my	=	32,16
 qx,qy	=	mx//2, my//2
@@ -27,6 +40,12 @@ d_max	= ((mx-1)**2 + (my-1)**2)**(1/2)
 #qtd 	= 2
 
 print('Tupla de coordenadas dos %d sentidos:'%len(sentidos),sentidos,'\nCoordenadas máximas:\t %d,%d' %(mx,my),'\nDistância máxima:\t', d_max)
+
+from tkinter import DISABLED, BOTH, RIGHT, LEFT, Tk, Frame, Button, Label
+from threading import Thread
+from time import sleep, time
+from random import random
+from Aboutn.quadro import Quadro#, quadrado
 
 '''
  #	aptidão
@@ -84,7 +103,7 @@ def xadrez (mestre, c=8,h=None,espera=0,matriz=[],ligue=False,*ligargs):
 				matriz[0][0].pack(fill=BOTH, side=RIGHT)
 				matriz[0][0].coord = x-1,y-1
 			#	matriz[0][0].ir = lambda col=x-1,lin=y-1: funcao(col,lin)#matriz[lin][col].config(**VER)#print(pos)
-			#	print(x,y)
+				#print(x,y)
 				sleep(espera/(x*y))
 				x -= 1
 			y -= 1
@@ -259,10 +278,10 @@ class Tela:
 			self.b[y][x].config(**cor)
 			return True
 		except IndexError:
-			print('Posição [',x,y,'] inválida')
+			#print('Posição [',x,y,'] inválida')
 			return False
 		except:
-			print('Erro em configurar o botão [',x,y,'] de', self.b)
+			#print('Erro em configurar o botão [',x,y,'] de', self.b)
 			return 
 	
 	def iniciar (self,tela=None,quadrados=[]):
@@ -281,7 +300,7 @@ class Tela:
 		b[2].pack()
 		b[0].pack()
 		b = '0123456789ABCDEF'
-		c = len(sentidos)# - 1
+		c = len(b)#sentidos) - 1
 		while c > 0:
 			c += -1
 			for d in (b[c]*2).title():
@@ -301,10 +320,10 @@ class Tela:
 			self.iniciar()
 		except Exception:
 			pass
-		#	print(self,'incapaz de reiniciar neste momento, tente novamente mais tarde.')
+			#print(self,'incapaz de reiniciar neste momento, tente novamente mais tarde.')
 
-	def continuar (self, inverter=False, geracao=None):
-		if inverter:
+	def continuar (self,geracao=None):
+		if len(self.n)%2==1:
 			global BRANCO, PRETO
 			BRANCO, PRETO = PRETO, BRANCO
 			BRA['bg'],BRA['fg'],PRE['fg'],PRE['bg'] = PRE['bg'],PRE['fg'],BRA['fg'],BRA['bg']

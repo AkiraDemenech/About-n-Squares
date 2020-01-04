@@ -1,4 +1,6 @@
 from Aboutn import quadrado
+tamanho = len(quadrado.tela.sentidos)#*2
+print('Aptidão máxima: \t',quadrado.f_max,'\nTamanho cromossômico:\t',quadrado.tamanho,'\t(%s)\nTamanho populacional:\t' %quadrado.algarismos,tamanho)
 
 def popular (n=0,p=None):
 	if p == None:
@@ -16,27 +18,32 @@ def popular (n=0,p=None):
 
 def sortear (p,n=range(2)):
 	p.sort()
+	p,t = p.populacao,p.f
 	c = len(p)
+	#print(p.f)
 	while c > 0:
 		r = []
-		f = p.f
+		f = t
 		for d in n:
 			d = 0
 			a = quadrado.tela.random() * f
-			while True:
-				if not d in r:
-					if a < p.populacao[d].f:
+			while d < len(p):
+				if p[d].f != None and not d in r:
+					if a < p[d].f:
 						break
-					a -= p.populacao[d].f
+					a -= p[d].f
 				d += 1
-			f -= p.populacao[d].f
-			r.append(d)
+			try:
+				f -= p[d].f
+				r.append(d)
+			except IndexError:
+				print('ERRO',len(p))
 		yield r
 		c -= 1
 
 class Quadro:
 
-	populacao = s = f = None
+	populacao = correr = fila = f = s = None
 
 	def __contains__ (self,algo):
 		return self.populacao.__contains__(algo)
@@ -94,11 +101,12 @@ class Quadro:
 			mestra = mestra.s
 		if not type(populacao) in (list,tuple,set):
 			if populacao == None:
-				populacao = 16
+				populacao = tamanho
 			populacao = popular(populacao)
 		elif type(populacao) != list:
 			populacao = list(populacao)
 		self.populacao = populacao
+	#	self.pedidos = []
 		self.mestra(mestra)
 		if mestra == None:
 			mestra = quadrado.tela.Tela(None,self)
@@ -123,19 +131,28 @@ class Quadro:
 				self.populacao[c] = quadrado.Quadrado(self.populacao[c])
 			self.populacao[c].mestra(mestra,quadrado.tela.PRE)
 
-	def continuar (self):
+	def continuar (self,quem=None):
 		self.pausar()
+		#print(quem)
+		quadrado.tela.sleep(1/11)#1.44)
+	#	if len(self.pedidos) > 0:
+		if self.fila != None:
+			return
+		self.fila = quem
 		t = []
 		for x,y in sortear(self):
-			print(x,y)
+			#print(x,y)
 			t.append(quadrado.cruzar(self.populacao[x],self.populacao[y]))
-		t.append(self.populacao[0])
+		t.append(quadrado.Quadrado(self.populacao[0].c))
 		t,self.populacao = self.populacao,t
 		self.mestra()
 		self.s.q.ir(para=(quadrado.tela.qx,quadrado.tela.qy),permissao=True)
-		self.s.continuar(len(self)%2==1,t)
-		self.iniciar()
-		print(len(self),'em campo.')
+		self.s.continuar(t)
+	#	self.iniciar()
+	#	self.pedidos.clear()
+		self.fila = None
+		print(len(self),'no plano.')
+	
 	
 	def reiniciar (self,event=False):
 		self.pausar()
@@ -146,13 +163,20 @@ class Quadro:
 			self.iniciar()
 	
 	def iniciar (self):
-		if self.s.q in self:
-			self.reiniciar(True)
+		if self.s.q in self:# and self.populacao[self.populacao.index(self.s.q)].find('100001000') == 0:
+		#	a = self.populacao[self.index(self.s.q)]
+			#print(a, a.x==self.s.q.x,a.y==self.s.q.y)
+			self.reiniciar()
 		self.s.q.iniciar()
-		for q in self:#.populacao:
-			q.iniciar()
+		self.correr = True
+		try:
+			for q in self:#.populacao:
+				q.iniciar()
+		except RuntimeError:
+			self.s.reiniciar()
 
 	def pausar (self):
+		self.correr = False
 		self.s.q.pausar()
 		for q in self:#.populacao:
 			q.pausar()
@@ -172,3 +196,6 @@ class Quadro:
 	
 	def reverse (self):
 		self.populacao.reverse()
+
+	def index (self, qual):
+		return self.populacao.index(qual)

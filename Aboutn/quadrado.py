@@ -1,9 +1,11 @@
 from Aboutn import tela#, warnings
 
-f_max	= 100
-tamanho	=  73 
+representacao= (5,) + ((4,) * (len(tela.sentidos) + 1))
 algarismos	 = "01"#'ai'
-representacao= (5,) + ((4,) * 17)
+f_max	= 100
+tamanho	=   0 #73 == 5 + (4 * (len(tela.sentidos) + 1))
+for r in representacao:
+	tamanho += r
 
 def verificar (*ind):
 	e = 0
@@ -22,7 +24,7 @@ def gerar (tipo=str):
 		d = tamanho
 		while d > 0:
 			d -= 1
-			c += algarismos[int(tela.random()*len(algarismos))]
+			c += algarismos[int(len(algarismos)*tela.random())]
 		return c
 	return tipo(gerar())
 
@@ -72,13 +74,13 @@ def decimal (b):
 class Quadrado:
 
 	y = x = 0
-	s = c = cor = erro = correr = None
+	f = s = c = cor = erro = correr = None
 
 	def __ne__ (self,outro):
 		return not self.__eq__(outro)
 	def __eq__ (self,outro):
 		try:
-			if None != self.c:
+			if None != self.c and outro.c != None:
 				return self.c == outro.c
 	
 			return self.y == outro.y and self.x == outro.x #and self.s == outro.s
@@ -91,7 +93,7 @@ class Quadrado:
 			if type(outro) != Quadrado:
 				return None
 			return self.f < outro.f
-		except AttributeError:
+		except TypeError:
 			return self.y < outro.y or (self.y == outro.y and self.x < outro.x)
 		#	return self.c < outro.c
 	def __gt__ (self,outro):
@@ -99,7 +101,7 @@ class Quadrado:
 			if type(outro) != Quadrado:
 				return None
 			return self.f > outro.f
-		except AttributeError:
+		except TypeError:
 			return self.y > outro.y or (self.y == outro.y and self.x > outro.x)
 		#	return self.c > outro.c
 	def __ge__ (self,outro):
@@ -129,10 +131,8 @@ class Quadrado:
 			res = "None, False,%d,%d"%(self.x,self.y)
 		else:
 			res = self.c.__repr__()#'"%s"' %self.c
-			try:
+			if self.f != None:
 				res += ', x=%d,y=%d, apto=%f' %(self.x, self.y, self.f)
-			except AttributeError:
-				pass
 		res = 'Quadrado(%s)' %res
 		if __name__ != '__main__':
 			res = 'quadrado.%s' %res
@@ -194,13 +194,20 @@ class Quadrado:
 			c = cruzar(self.c,outro.c)
 		except AttributeError:
 			c = cruzar(self.c,outro)
-		return Quadrado(c,self.s,self.x,self.y,self.cor)
+		return Quadrado(c,self.s,cor=self.cor)
+	#	return Quadrado(c,self.s,self.x,self.y,self.cor)
 
 	def __neg__ (self):
 		return Quadrado(negativar(self.c),self.s,self.x,self.y,self.cor)
 
 	def reverse (self):
 		return Quadrado(reverter(self.c),self.s,self.x,self.y,self.cor)
+
+	def find (self, gene):
+		try:
+			return self.c.find(gene)
+		except AttributeError:
+			return -2
 
 	def mestra (self,mestra=None,cor=None):
 		if None != cor:
@@ -282,7 +289,8 @@ class Quadrado:
 					dx,dy = self.rotas[self.localizar()]
 			except KeyError:
 				dy=dx = 0
-			#	print('No ponto cego de',str(self))
+			#	dx,dy = tela.sentidos[int(len(tela.sentidos)*tela.random())]
+				#print('No ponto cego de',str(self))
 
 			self.x,dx = self.x+dx,self.x
 			self.y,dy = self.y+dy,self.y
@@ -305,7 +313,7 @@ class Quadrado:
 			self.y = 0
 
 		if not (self.mover(dx,dy) or permissao):
-			print('Movimentação de',self,'não concluída.')
+			#print('Movimentação de',self,'não concluída.')
 			return False
 		return True
 
@@ -313,11 +321,11 @@ class Quadrado:
 #		self.vencido = v
 
 	def andar (self):
-		while self.correr and self.ir():
+		while self.s.n.correr and self.correr and self.ir():
 			if self.s.q == self:
-				self.s.n.continuar()
+				self.s.n.continuar(self)
 			tela.sleep(0.55 + tela.random())
-	#	print(self,'parou de andar.')
+		#print(self,'parou de andar.')
 
 	def iniciar (self):
 		self.correr = True
@@ -326,5 +334,3 @@ class Quadrado:
 
 	def pausar (self):
 		self.correr = False
-
-
