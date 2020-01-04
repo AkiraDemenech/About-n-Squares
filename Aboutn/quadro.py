@@ -1,6 +1,5 @@
 from Aboutn import quadrado
-tamanho = len(quadrado.tela.sentidos)#*2
-print('Aptidão máxima: \t',quadrado.f_max,'\nTamanho cromossômico:\t',quadrado.tamanho,'\t(%s)\nTamanho populacional:\t' %quadrado.algarismos,tamanho)
+tamanho = 24#len(quadrado.tela.sentidos)
 
 def popular (n=0,p=None):
 	if p == None:
@@ -140,10 +139,13 @@ class Quadro:
 			return
 		self.fila = quem
 		t = []
-		for x,y in sortear(self):
-			#print(x,y)
-			t.append(quadrado.cruzar(self.populacao[x],self.populacao[y]))
-		t.append(quadrado.Quadrado(self.populacao[0].c))
+		try:
+			for x,y in sortear(self):
+				#print(x,y)
+				t.append(quadrado.cruzar(self.populacao[x],self.populacao[y]))
+		except ValueError:
+			t.extend(self.populacao)	
+		t.append(self.populacao[0].copy())
 		t,self.populacao = self.populacao,t
 		self.mestra()
 		self.s.q.ir(para=(quadrado.tela.qx,quadrado.tela.qy),permissao=True)
@@ -197,5 +199,17 @@ class Quadro:
 	def reverse (self):
 		self.populacao.reverse()
 
+	def remove (self,o):
+		return self.populacao.remove(o)
+	def pop (self,i):
+		return self.populacao.pop(i)
 	def index (self, qual):
 		return self.populacao.index(qual)
+	def count (self, qual):
+		return self.populacao.count(qual)
+	def append (self,quad):
+		return self.populacao.append(quad)
+	def extend (self,quad):
+		return self.populacao.extend(quad)
+	def copy (self):
+		return Quadro(self)

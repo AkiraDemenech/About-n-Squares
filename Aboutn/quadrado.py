@@ -1,4 +1,5 @@
-from Aboutn import tela#, warnings
+#import warnings
+from Aboutn import tela
 
 representacao= (5,) + ((4,) * (len(tela.sentidos) + 1))
 algarismos	 = "01"#'ai'
@@ -66,7 +67,7 @@ def decimal (b):
 	while c < len(b):
 		if not b[c] in algarismos:
 			print('Dígito %s sem valor em %s' %(b[c],b))
-#			warnings.warn('Dígito %s sem valor em %s' %(b[c],b),SyntaxWarning)
+			#warnings.warn('Dígito %s sem valor em %s' %(b[c],b),SyntaxWarning)
 		a = (a*len(algarismos)) + algarismos.find(b[c])
 		c += 1
 	return a
@@ -198,16 +199,26 @@ class Quadrado:
 	#	return Quadrado(c,self.s,self.x,self.y,self.cor)
 
 	def __neg__ (self):
-		return Quadrado(negativar(self.c),self.s,self.x,self.y,self.cor)
+		return Quadrado(negativar(self.c),self.s,cor=self.cor)
 
 	def reverse (self):
-		return Quadrado(reverter(self.c),self.s,self.x,self.y,self.cor)
+		return Quadrado(reverter(self.c), self.s,cor=self.cor)
 
+	def index (self,gene):
+		return self.c.index(gene)
 	def find (self, gene):
 		try:
 			return self.c.find(gene)
 		except AttributeError:
 			return -2
+	def count (self,gene):
+		try:
+			return self.c.count(gene)
+		except AttributeError:
+			return  0
+
+	def copy (self):
+		return Quadrado(self.c,self.s,cor=self.cor)
 
 	def mestra (self,mestra=None,cor=None):
 		if None != cor:
@@ -334,3 +345,4 @@ class Quadrado:
 
 	def pausar (self):
 		self.correr = False
+	

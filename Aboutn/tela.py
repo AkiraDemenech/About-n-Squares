@@ -39,9 +39,7 @@ d_max	= ((mx-1)**2 + (my-1)**2)**(1/2)
 #vence 	= [0,0]
 #qtd 	= 2
 
-print('Tupla de coordenadas dos %d sentidos:'%len(sentidos),sentidos,'\nCoordenadas máximas:\t %d,%d' %(mx,my),'\nDistância máxima:\t', d_max)
-
-from tkinter import DISABLED, BOTH, RIGHT, LEFT, Tk, Frame, Button, Label
+from tkinter import BOTH, RIGHT, LEFT, Tk, Frame, Button, Label
 from threading import Thread
 from time import sleep, time
 from random import random
@@ -113,7 +111,7 @@ def xadrez (mestre, c=8,h=None,espera=0,matriz=[],ligue=False,*ligargs):
 	if ligue:
 		t = time() - t
 		mestre.master.title("About n []")
-		print ('Espera máxima:\t%f\nTempo total:\t%f\nTempo médio:\t%f\nTotal:\t%d botões\n'%(espera,t,t/(h*c),c*h))
+		print('Espera máxima:\t%f\nTempo total:\t%f\nTempo médio:\t%f\nTotal:\t%d botões\n'%(espera,t,t/(h*c),c*h))
 		ativar(matriz,*ligargs)
 	return matriz
 
