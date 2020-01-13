@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fl:
 
 setuptools.setup(
     name='Aboutn',
-    version='0.2.2.8',
+    version='0.2.2.10',
     url='https://github.com/AkiraDemenech/About-n-Squares/',
     license='MIT License',
     author= 'Guilherme Akira Demenech Mori',
@@ -15,5 +15,5 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
     install_requires=[],
-    classifiers=[ "Programming Language :: Python :: 3", "License :: OSI Approved :: MIT License", "Operating System :: OS Independent", ],
+    classifiers=["Programming Language :: Python :: 3", "License :: OSI Approved :: MIT License", "Operating System :: OS Independent",],
 )
