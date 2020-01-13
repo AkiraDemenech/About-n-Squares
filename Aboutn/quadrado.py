@@ -1,12 +1,20 @@
-#import warnings
-from Aboutn import tela
+
+try:
+#	import warnings
+	import tela
+except ImportError:
+	from Aboutn import tela
 
 representacao= (5,) + ((4,) * (len(tela.sentidos) + 1))
-algarismos	 = "01"#'ai'
+algarismos	 = "01"#'ai'#' \t'
 f_max	= 100
 tamanho	=   0 #73 == 5 + (4 * (len(tela.sentidos) + 1))
-for r in representacao:
-	tamanho += r
+
+def __len__ ():
+	global tamanho
+	for r in representacao:
+		tamanho += r
+	return tamanho
 
 def verificar (*ind):
 	e = 0
@@ -345,4 +353,3 @@ class Quadrado:
 
 	def pausar (self):
 		self.correr = False
-	

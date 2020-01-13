@@ -1,6 +1,6 @@
 import setuptools
 with open("README.md", "r", encoding="utf-8") as fl:
-    long_description = fl.read()
+    long_description = fl.read();
 
 setuptools.setup(
     name='Aboutn',
@@ -16,4 +16,4 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=[],
     classifiers=["Programming Language :: Python :: 3", "License :: OSI Approved :: MIT License", "Operating System :: OS Independent",],
-)
+);

@@ -1,5 +1,13 @@
-from Aboutn import quadrado
-tamanho = 24#len(quadrado.tela.sentidos)
+try:
+	import quadrado
+except ImportError:
+	from Aboutn import quadrado
+tamanho = 24
+
+def __len__ ():
+	global tamanho
+	tamanho = len(quadrado.tela.sentidos)
+	return tamanho
 
 def popular (n=0,p=None):
 	if p == None:
@@ -100,7 +108,7 @@ class Quadro:
 			mestra = mestra.s
 		if not type(populacao) in (list,tuple,set):
 			if populacao == None:
-				populacao = tamanho
+				populacao = tamanho#__len__()
 			populacao = popular(populacao)
 		elif type(populacao) != list:
 			populacao = list(populacao)
@@ -136,6 +144,7 @@ class Quadro:
 		quadrado.tela.sleep(1/11)#1.44)
 	#	if len(self.pedidos) > 0:
 		if self.fila != None:
+			print('Solicitação rejeitada.')
 			return
 		self.fila = quem
 		t = []
@@ -144,32 +153,33 @@ class Quadro:
 				#print(x,y)
 				t.append(quadrado.cruzar(self.populacao[x],self.populacao[y]))
 		except ValueError:
+			print('ERRO')
 			t.extend(self.populacao)	
-		t.append(self.populacao[0].copy())
+		t.append(self.populacao[0].copy())#fila.copy())
 		t,self.populacao = self.populacao,t
 		self.mestra()
 		self.s.q.ir(para=(quadrado.tela.qx,quadrado.tela.qy),permissao=True)
 		self.s.continuar(t)
 	#	self.iniciar()
 	#	self.pedidos.clear()
-		self.fila = None
-		print(len(self),'no plano.')
+		self.fila = print('%03d quadrados %ss na construção.' %(len(self),quadrado.tela.CORES[self.fila.cor[quadrado.tela.FUNDO]].title()))
 	
 	
 	def reiniciar (self,event=False):
 		self.pausar()
 		self.populacao.clear()
 		self.__init__(self.s)
-		print(len(self),'novos quadrados gerados')
+		print(len(self),'novos quadrados Não-vermelhos gerados.')
 		if event:
 			self.iniciar()
 	
 	def iniciar (self):
-		if self.s.q in self:# and self.populacao[self.populacao.index(self.s.q)].find('100001000') == 0:
+		if self.s.q in self: #and self.populacao[self.populacao.index(self.s.q)].find('100001000') == 0:
 		#	a = self.populacao[self.index(self.s.q)]
 			#print(a, a.x==self.s.q.x,a.y==self.s.q.y)
 			self.reiniciar()
 		self.s.q.iniciar()
+		self.s.run()
 		self.correr = True
 		try:
 			for q in self:#.populacao:
